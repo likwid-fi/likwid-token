@@ -1,0 +1,38 @@
+{
+  "solidity.packageDefaultDependenciesContractsDirectory": "src",
+  "solidity.packageDefaultDependenciesDirectory": "lib",
+  "editor.formatOnSave": true,
+  "[solidity]": {
+    "editor.defaultFormatter": "NomicFoundation.hardhat-solidity"
+  },
+  "solidity.formatter": "forge",
+  "solidity.compileUsingRemoteVersion": "v0.8.26",
+  "solidity.remappingsWindows": [],
+  "cSpell.words": [
+    "Agos",
+    "BLACKLISTER",
+    "chainid",
+    "Extsload",
+    "Exttload",
+    "IERC",
+    "inheritdoc",
+    "iszero",
+    "keccak",
+    "layerzerolabs",
+    "LMPM",
+    "mload",
+    "PRIKEY",
+    "Reentrancy",
+    "returndata",
+    "returndatacopy",
+    "returndatasize",
+    "solmate",
+    "SSTOREs",
+    "TESTB",
+    "tload",
+    "tstore",
+    "UDVT",
+    "unblacklist",
+    "USDTS"
+  ]
+}
