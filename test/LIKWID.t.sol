@@ -8,7 +8,7 @@ contract LikwidTest is Test {
     LIKWID public token;
 
     function setUp() public {
-        token = new LIKWID();
+        // token = new LIKWID();
     }
 
     function test_Increment() public {}

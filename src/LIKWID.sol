@@ -5,8 +5,9 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {OFT} from "@layerzerolabs/oft-evm/contracts/OFT.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
+import {ILIKWID} from "./ILIKWID.sol";
 
-contract LIKWID is OFT, ERC20Permit, AccessControl {
+contract LIKWID is ILIKWID, OFT, ERC20Permit, AccessControl {
     uint256 public immutable MAX_SUPPLY = 1_000_000_000 * 10 ** 18; // 1 billion total tokens
 
     bytes32 public constant BLACKLISTER_ROLE = keccak256("BLACKLISTER_ROLE");

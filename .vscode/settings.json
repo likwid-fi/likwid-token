@@ -15,6 +15,7 @@
     "Extsload",
     "Exttload",
     "IERC",
+    "ILIKWID",
     "inheritdoc",
     "iszero",
     "keccak",
@@ -33,6 +34,7 @@
     "tstore",
     "UDVT",
     "unblacklist",
+    "unblacklisted",
     "USDTS"
   ]
 }
