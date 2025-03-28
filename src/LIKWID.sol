@@ -14,13 +14,18 @@ contract LIKWID is ILIKWID, OFT, ERC20Permit, AccessControl {
 
     mapping(address user => bool isBlacklisted) private blacklistedUsers;
 
-    constructor(string memory _name, string memory _symbol, address _lzEndpoint, address _delegate)
-        OFT(_name, _symbol, _lzEndpoint, _delegate)
-        Ownable(_delegate)
-        ERC20Permit(_name)
-    {
-        _grantRole(DEFAULT_ADMIN_ROLE, _msgSender());
-        _mint(_msgSender(), MAX_SUPPLY);
+    constructor(
+        uint256 _mainChainId,
+        string memory _name,
+        string memory _symbol,
+        address _lzEndpoint,
+        address _delegate,
+        address _treasury
+    ) OFT(_name, _symbol, _lzEndpoint, _delegate) Ownable(_delegate) ERC20Permit(_name) {
+        _grantRole(DEFAULT_ADMIN_ROLE, _treasury);
+        if (block.chainid == _mainChainId) {
+            _mint(_treasury, MAX_SUPPLY);
+        }
     }
 
     function bulkBlacklistUpdate(address[] calldata accounts, bool[] calldata statuses)
