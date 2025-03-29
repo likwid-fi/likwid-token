@@ -12,3 +12,9 @@ docs/
 
 # Dotenv file
 .env
+
+# Hardhat
+node_modules/
+
+# Local
+/script/LocalTests.s.sol
