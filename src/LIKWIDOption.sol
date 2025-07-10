@@ -12,12 +12,12 @@ contract LIKWIDOption is LIKWIDBase {
     event OptionClaimed(address indexed user, uint256 amount);
     event OptionRedeemed(address indexed user, uint256 amount);
 
-    address public immutable PAYMENT_TOKEN; // payment token address
     IERC20 public immutable LIKWID;
 
     mapping(bytes signature => bool claimed) private claimedOptions;
-    address public signer;
+    address public paymentToken; // payment token address
     uint256 public strikePrice = 0.2 ether; // 0.2 paymentToken per option;
+    address public signer;
     address public treasury;
 
     constructor(
@@ -31,7 +31,7 @@ contract LIKWIDOption is LIKWIDBase {
     ) LIKWIDBase(_mainChainId, "Likwid Option Token", "oLIKWID", 10_000_000 ether, _lzEndpoint, _delegate, _treasury) {
         treasury = _treasury;
         signer = _signer;
-        PAYMENT_TOKEN = _paymentToken;
+        paymentToken = _paymentToken;
         LIKWID = _likwid;
     }
 
@@ -41,6 +41,11 @@ contract LIKWIDOption is LIKWIDBase {
 
     function setSigner(address _signer) external onlyOwner {
         signer = _signer;
+    }
+
+    function setPaymentToken(address _paymentToken) external onlyOwner {
+        require(_paymentToken != address(0), "LIKWIDOption: payment token cannot be zero address");
+        paymentToken = _paymentToken;
     }
 
     function setStrikePrice(uint256 _strikePrice) external onlyOwner {
@@ -73,7 +78,7 @@ contract LIKWIDOption is LIKWIDBase {
         require(LIKWID.balanceOf(address(this)) >= amount, "LIKWIDOption: LIKWID insufficient balance");
 
         uint256 paymentAmount = amount * strikePrice / 1 ether;
-        IERC20(PAYMENT_TOKEN).safeTransferFrom(_msgSender(), treasury, paymentAmount);
+        IERC20(paymentToken).safeTransferFrom(_msgSender(), treasury, paymentAmount);
         _burn(_msgSender(), amount);
         LIKWID.safeTransfer(_msgSender(), amount);
 
