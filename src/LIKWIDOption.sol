@@ -1,12 +1,16 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.26;
 
-import {LIKWIDBase} from "./LIKWIDBase.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {OFT} from "@layerzerolabs/oft-evm/contracts/OFT.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
 
-contract LIKWIDOption is LIKWIDBase {
+contract LIKWIDOption is OFT, ERC20Permit {
+    uint256 public immutable MAX_SUPPLY = 10_000_000 ether; // default: 10 million total tokens
+
     using SafeERC20 for IERC20;
 
     event OptionClaimed(address indexed user, uint256 amount);
@@ -28,11 +32,18 @@ contract LIKWIDOption is LIKWIDBase {
         address _signer,
         address _paymentToken,
         IERC20 _likwid
-    ) LIKWIDBase(_mainChainId, "Likwid Option Token", "oLIKWID", 10_000_000 ether, _lzEndpoint, _delegate, _treasury) {
+    )
+        OFT("Likwid Option Token", "oLIKWID", _lzEndpoint, _delegate)
+        Ownable(_delegate)
+        ERC20Permit("Likwid Option Token")
+    {
         treasury = _treasury;
         signer = _signer;
         paymentToken = _paymentToken;
         LIKWID = _likwid;
+        if (block.chainid == _mainChainId) {
+            _mint(_treasury, MAX_SUPPLY);
+        }
     }
 
     function setTreasury(address _treasury) external onlyOwner {

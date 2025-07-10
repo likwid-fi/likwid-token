@@ -1,10 +1,20 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.26;
 
-import {LIKWIDBase} from "./LIKWIDBase.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {OFT} from "@layerzerolabs/oft-evm/contracts/OFT.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
 
-contract LIKWID is LIKWIDBase {
-    constructor(uint256 _mainChainId, address _lzEndpoint, address _delegate, address _treasury, uint256 _totalSupply)
-        LIKWIDBase(_mainChainId, "Likwid Token", "LIKWID", 1_000_000_000 ether, _lzEndpoint, _delegate, _treasury)
-    {}
+contract LIKWID is OFT, ERC20Permit {
+    uint256 public immutable MAX_SUPPLY = 1_000_000_000 ether; // default: 1 billion total tokens
+
+    constructor(uint256 _mainChainId, address _lzEndpoint, address _delegate, address _treasury)
+        OFT("Likwid Token", "LIKWID", _lzEndpoint, _delegate)
+        Ownable(_delegate)
+        ERC20Permit("Likwid Token")
+    {
+        if (block.chainid == _mainChainId) {
+            _mint(_treasury, MAX_SUPPLY);
+        }
+    }
 }
