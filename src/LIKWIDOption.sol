@@ -10,6 +10,7 @@ contract LIKWIDOption is LIKWIDBase {
     using SafeERC20 for IERC20;
 
     event OptionClaimed(address indexed user, uint256 amount);
+    event OptionRedeemed(address indexed user, uint256 amount);
 
     mapping(bytes signature => bool claimed) private claimedOptions;
     address public signer;
@@ -58,8 +59,9 @@ contract LIKWIDOption is LIKWIDBase {
         require(!claimedOptions[signature], "LIKWIDOption: option already claimed");
         bytes32 hash = getHash("claim", symbol(), amount, _msgSender());
         require(SignatureChecker.isValidSignatureNow(signer, hash, signature), "LIKWIDOption: verify error");
+
         claimedOptions[signature] = true;
-        transfer(_msgSender(), amount);
+        _transfer(address(this), _msgSender(), amount);
 
         emit OptionClaimed(_msgSender(), amount);
     }
@@ -68,9 +70,12 @@ contract LIKWIDOption is LIKWIDBase {
         require(amount > 0, "LIKWIDOption: amount must be greater than zero");
         require(balanceOf(_msgSender()) >= amount, "LIKWIDOption: insufficient balance");
         require(likwid.balanceOf(address(this)) >= amount, "LIKWIDOption: LIKWID insufficient balance");
-        _burn(_msgSender(), amount);
+
         uint256 paymentAmount = amount * paymentPrice / 1 ether;
         IERC20(paymentToken).safeTransferFrom(_msgSender(), treasury, paymentAmount);
+        _transfer(_msgSender(), treasury, amount);
         likwid.safeTransfer(_msgSender(), amount);
+
+        emit OptionRedeemed(_msgSender(), amount);
     }
 }
