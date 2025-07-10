@@ -12,12 +12,13 @@ contract LIKWIDOption is LIKWIDBase {
     event OptionClaimed(address indexed user, uint256 amount);
     event OptionRedeemed(address indexed user, uint256 amount);
 
+    address public immutable PAYMENT_TOKEN; // payment token address
+    IERC20 public immutable LIKWID;
+
     mapping(bytes signature => bool claimed) private claimedOptions;
     address public signer;
-    address public immutable paymentToken;
-    uint256 public paymentPrice = 0.2 ether; // 0.2 paymentToken per option;
+    uint256 public strikePrice = 0.2 ether; // 0.2 paymentToken per option;
     address public treasury;
-    IERC20 public immutable likwid;
 
     constructor(
         uint256 _mainChainId,
@@ -27,11 +28,11 @@ contract LIKWIDOption is LIKWIDBase {
         address _signer,
         address _paymentToken,
         IERC20 _likwid
-    ) LIKWIDBase(_mainChainId, "Likwid Option Token", "oLIKWID", _lzEndpoint, _delegate, _treasury) {
+    ) LIKWIDBase(_mainChainId, "Likwid Option Token", "oLIKWID", 10_000_000 ether, _lzEndpoint, _delegate, _treasury) {
         treasury = _treasury;
         signer = _signer;
-        paymentToken = _paymentToken;
-        likwid = _likwid;
+        PAYMENT_TOKEN = _paymentToken;
+        LIKWID = _likwid;
     }
 
     function setTreasury(address _treasury) external onlyOwner {
@@ -42,8 +43,8 @@ contract LIKWIDOption is LIKWIDBase {
         signer = _signer;
     }
 
-    function setPaymentPrice(uint256 _paymentPrice) external onlyOwner {
-        paymentPrice = _paymentPrice;
+    function setStrikePrice(uint256 _strikePrice) external onlyOwner {
+        strikePrice = _strikePrice;
     }
 
     function getHash(string memory biz, string memory symbol, uint256 amount, address sender)
@@ -69,13 +70,19 @@ contract LIKWIDOption is LIKWIDBase {
     function redeem(uint256 amount) external {
         require(amount > 0, "LIKWIDOption: amount must be greater than zero");
         require(balanceOf(_msgSender()) >= amount, "LIKWIDOption: insufficient balance");
-        require(likwid.balanceOf(address(this)) >= amount, "LIKWIDOption: LIKWID insufficient balance");
+        require(LIKWID.balanceOf(address(this)) >= amount, "LIKWIDOption: LIKWID insufficient balance");
 
-        uint256 paymentAmount = amount * paymentPrice / 1 ether;
-        IERC20(paymentToken).safeTransferFrom(_msgSender(), treasury, paymentAmount);
-        _transfer(_msgSender(), treasury, amount);
-        likwid.safeTransfer(_msgSender(), amount);
+        uint256 paymentAmount = amount * strikePrice / 1 ether;
+        IERC20(PAYMENT_TOKEN).safeTransferFrom(_msgSender(), treasury, paymentAmount);
+        _burn(_msgSender(), amount);
+        LIKWID.safeTransfer(_msgSender(), amount);
 
         emit OptionRedeemed(_msgSender(), amount);
+    }
+
+    function withdraw() external onlyOwner {
+        uint256 balance = IERC20(LIKWID).balanceOf(address(this));
+        require(balance > 0, "LIKWIDOption: no balance to withdraw");
+        IERC20(LIKWID).safeTransfer(treasury, balance);
     }
 }

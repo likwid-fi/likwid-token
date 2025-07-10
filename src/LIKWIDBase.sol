@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import {ILIKWID} from "./ILIKWID.sol";
 
 contract LIKWIDBase is ILIKWID, OFT, ERC20Permit, AccessControl {
-    uint256 public immutable MAX_SUPPLY = 1_000_000_000 * 10 ** 18; // 1 billion total tokens
+    uint256 public immutable MAX_SUPPLY;
 
     bytes32 public constant BLACKLISTER_ROLE = keccak256("BLACKLISTER_ROLE");
 
@@ -18,10 +18,13 @@ contract LIKWIDBase is ILIKWID, OFT, ERC20Permit, AccessControl {
         uint256 _mainChainId,
         string memory _name,
         string memory _symbol,
+        uint256 _totalSupply,
         address _lzEndpoint,
         address _delegate,
         address _treasury
     ) OFT(_name, _symbol, _lzEndpoint, _delegate) Ownable(_delegate) ERC20Permit(_name) {
+        require(_totalSupply > 0, "LIKWID: total supply must be greater than zero");
+        MAX_SUPPLY = _totalSupply;
         _grantRole(DEFAULT_ADMIN_ROLE, _treasury);
         if (block.chainid == _mainChainId) {
             _mint(_treasury, MAX_SUPPLY);
