@@ -18,13 +18,13 @@ contract LIKWIDBase is ILIKWID, OFT, ERC20Permit, AccessControl {
         uint256 _mainChainId,
         string memory _name,
         string memory _symbol,
-        uint256 _totalSupply,
+        uint256 _maxSupply,
         address _lzEndpoint,
         address _delegate,
         address _treasury
     ) OFT(_name, _symbol, _lzEndpoint, _delegate) Ownable(_delegate) ERC20Permit(_name) {
-        require(_totalSupply > 0, "LIKWID: total supply must be greater than zero");
-        MAX_SUPPLY = _totalSupply;
+        require(_maxSupply > 0, "LIKWID: total supply must be greater than zero");
+        MAX_SUPPLY = _maxSupply;
         _grantRole(DEFAULT_ADMIN_ROLE, _treasury);
         if (block.chainid == _mainChainId) {
             _mint(_treasury, MAX_SUPPLY);
