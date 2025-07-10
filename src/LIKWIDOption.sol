@@ -9,9 +9,9 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
 
 contract LIKWIDOption is OFT, ERC20Permit {
-    uint256 public immutable MAX_SUPPLY = 10_000_000 ether; // default: 10 million total tokens
-
     using SafeERC20 for IERC20;
+
+    uint256 public immutable MAX_SUPPLY = 10_000_000 ether; // default: 10 million total tokens
 
     event OptionClaimed(address indexed user, uint256 amount);
     event OptionRedeemed(address indexed user, uint256 amount);
