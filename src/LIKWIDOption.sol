@@ -96,9 +96,16 @@ contract LIKWIDOption is OFT, ERC20Permit {
         emit OptionRedeemed(_msgSender(), amount);
     }
 
-    function withdraw() external onlyOwner {
-        uint256 balance = IERC20(LIKWID).balanceOf(address(this));
-        require(balance > 0, "LIKWIDOption: no balance to withdraw");
-        IERC20(LIKWID).safeTransfer(treasury, balance);
+    function withdraw(address token) external onlyOwner {
+        if (token == address(0)) {
+            uint256 balance = address(this).balance;
+            require(balance > 0, "LIKWIDOption: no native balance to withdraw");
+            (bool success, ) = treasury.call{value: balance}("");
+            require(success, "LIKWIDOption: native transfer failed");
+        } else {
+            uint256 balance = IERC20(token).balanceOf(address(this));
+            require(balance > 0, "LIKWIDOption: no token balance to withdraw");
+            IERC20(token).safeTransfer(treasury, balance);
+        }
     }
 }
