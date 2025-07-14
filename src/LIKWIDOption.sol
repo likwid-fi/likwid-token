@@ -11,7 +11,7 @@ import "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
 contract LIKWIDOption is OFT, ERC20Permit {
     using SafeERC20 for IERC20;
 
-    uint256 public immutable MAX_SUPPLY = 10_000_000 ether; // default: 10 million total tokens
+    uint256 public immutable MAX_SUPPLY = 300_000_000 ether; // default: 300 million total tokens
 
     event OptionClaimed(address indexed user, uint256 amount);
     event OptionRedeemed(address indexed user, uint256 amount);
@@ -20,7 +20,7 @@ contract LIKWIDOption is OFT, ERC20Permit {
 
     mapping(bytes signature => bool claimed) private claimedOptions;
     address public paymentToken; // payment token address
-    uint256 public strikePrice = 0.2 ether; // 0.2 paymentToken per option;
+    uint256 public strikePrice = 0.03 ether; // 0.03 paymentToken per option;
     address public signer;
     address public treasury;
 
