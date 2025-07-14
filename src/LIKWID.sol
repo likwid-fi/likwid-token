@@ -8,12 +8,13 @@ import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
 contract LIKWID is OFT, ERC20Permit {
     uint256 public immutable MAX_SUPPLY = 1_000_000_000 ether; // default: 1 billion total tokens
 
-    constructor(uint256 _mainChainId, address _lzEndpoint, address _delegate, address _treasury)
+    constructor(address _lzEndpoint, address _delegate, address _treasury)
         OFT("Likwid Token", "LIKWID", _lzEndpoint, _delegate)
         Ownable(_delegate)
         ERC20Permit("Likwid Token")
     {
-        if (block.chainid == _mainChainId) {
+        // Ethereum mainnet chain ID is 1
+        if (block.chainid == 1) {
             _mint(_treasury, MAX_SUPPLY);
         }
     }

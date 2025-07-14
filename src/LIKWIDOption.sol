@@ -25,7 +25,6 @@ contract LIKWIDOption is OFT, ERC20Permit {
     address public treasury;
 
     constructor(
-        uint256 _mainChainId,
         address _lzEndpoint,
         address _delegate,
         address _treasury,
@@ -41,7 +40,8 @@ contract LIKWIDOption is OFT, ERC20Permit {
         signer = _signer;
         paymentToken = _paymentToken;
         LIKWID = _likwid;
-        if (block.chainid == _mainChainId) {
+        // Ethereum mainnet chain ID is 1
+        if (block.chainid == 1) {
             _mint(_treasury, MAX_SUPPLY);
         }
     }
