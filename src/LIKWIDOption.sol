@@ -63,18 +63,14 @@ contract LIKWIDOption is OFT, ERC20Permit {
         strikePrice = _strikePrice;
     }
 
-    function getHash(string memory biz, string memory symbol, uint256 amount, address sender)
-        public
-        pure
-        returns (bytes32)
-    {
-        return keccak256(abi.encodePacked(biz, symbol, amount, sender));
+    function getHash(string memory biz, address sender, uint256 nonce, uint256 amount) public pure returns (bytes32) {
+        return keccak256(abi.encodePacked(biz, sender, nonce, amount, sender));
     }
 
-    function claim(uint256 amount, bytes calldata signature) external {
+    function claim(uint256 nonce, uint256 amount, bytes calldata signature) external {
         require(amount > 0, "LIKWIDOption: amount must be greater than zero");
         require(!claimedOptions[signature], "LIKWIDOption: option already claimed");
-        bytes32 hash = getHash("claim", symbol(), amount, _msgSender());
+        bytes32 hash = getHash("claim_option", _msgSender(), nonce, amount);
         require(SignatureChecker.isValidSignatureNow(signer, hash, signature), "LIKWIDOption: verify error");
 
         claimedOptions[signature] = true;
@@ -100,7 +96,7 @@ contract LIKWIDOption is OFT, ERC20Permit {
         if (token == address(0)) {
             uint256 balance = address(this).balance;
             require(balance > 0, "LIKWIDOption: no native balance to withdraw");
-            (bool success, ) = treasury.call{value: balance}("");
+            (bool success,) = treasury.call{value: balance}("");
             require(success, "LIKWIDOption: native transfer failed");
         } else {
             uint256 balance = IERC20(token).balanceOf(address(this));
