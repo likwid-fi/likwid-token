@@ -63,8 +63,8 @@ contract LIKWIDOption is OFT, ERC20Permit {
         strikePrice = _strikePrice;
     }
 
-    function getHash(string memory biz, address sender, uint256 nonce, uint256 amount) public pure returns (bytes32) {
-        return keccak256(abi.encodePacked(biz, sender, nonce, amount));
+    function getHash(string memory biz, address sender, uint256 nonce, uint256 amount) public view returns (bytes32) {
+        return keccak256(abi.encodePacked(biz, block.chainid, sender, nonce, amount));
     }
 
     function claim(uint256 nonce, uint256 amount, bytes calldata signature) external {
