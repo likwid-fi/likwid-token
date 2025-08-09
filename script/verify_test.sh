@@ -33,3 +33,11 @@ forge verify-contract \
     --compiler-version v0.8.26+commit.8a97fa7a \
     0x716CE8f47504bC7E6E4bd29856585a2e202a4De6 \
     src/LIKWID.sol:LIKWID
+
+forge verify-contract \
+  --rpc-url https://testnet-rpc.monad.xyz \
+  --verifier sourcify \
+  --verifier-url 'https://sourcify-api-monad.blockvision.org' \
+  --constructor-args $(cast abi-encode "constructor(uint256,address,address,address)" 10143 "0x6C7Ab2202C98C4227C5c46f1417D81144DA716Ff" "0x35D3F3497eC612b3Dd982819F95cA98e6a404Ce1" "0x35D3F3497eC612b3Dd982819F95cA98e6a404Ce1") \
+  0x716CE8f47504bC7E6E4bd29856585a2e202a4De6 \
+  src/LIKWID.sol:LIKWID
