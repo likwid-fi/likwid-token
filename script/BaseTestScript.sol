@@ -40,17 +40,6 @@ contract BaseTestScript {
         }
     }
 
-    // On mainnet, the LIKWID contract is deployed with the same address.
-    function _getLikwid(uint256 chainId) internal pure returns (address _likwid) {
-        if (chainId == SEPOLIA) {
-            _likwid = 0x37c96b7F52d0E165832Ba8f614f91E76e36F1bcc;
-        } else if (chainId == BSC_TESTNET) {
-            _likwid = 0xDa4e2a0C4AAa142f0D5f5C56fc3651DcfD2c9657;
-        } else if (chainId == MONAD_TESTNET) {
-            _likwid = 0x716CE8f47504bC7E6E4bd29856585a2e202a4De6;
-        }
-    }
-
     function _getSendLib(uint256 chainId) internal pure returns (address _sendLib) {
         if (chainId == SEPOLIA) {
             _sendLib = 0xcc1ae8Cf5D3904Cef3360A9532B477529b177cCE;
@@ -82,8 +71,8 @@ contract BaseTestScript {
             _dvns[1] = 0x6334290B7b4a365F3c0E79c85B1b42F078db78E4; // Nethermind
         } else if (chainId == MONAD_TESTNET) {
             _dvns = new address[](2);
-            _dvns[0] = 0x88B27057A9e00c5F05DDa29241027afF63f9e6e0;
-            _dvns[1] = 0xB365Da66084D135E9bfaef73EB8be06029271681;
+            _dvns[0] = 0x88B27057A9e00c5F05DDa29241027afF63f9e6e0; // LayerZero Labs
+            _dvns[1] = 0xB365Da66084D135E9bfaef73EB8be06029271681; // Nethermind
         }
     }
 
@@ -100,6 +89,19 @@ contract BaseTestScript {
     function checkBlockChainId(uint256 chainId) internal view {
         if (block.chainid > 0 && block.chainid != chainId) {
             revert("Invalid chain ID");
+        }
+    }
+
+    // On mainnet, the LIKWID contract is deployed with the same address.
+    function _getLikwid(uint256 chainId) internal pure returns (address _likwid) {
+        if (chainId == SEPOLIA) {
+            _likwid = 0x37c96b7F52d0E165832Ba8f614f91E76e36F1bcc;
+        } else if (chainId == BSC_TESTNET) {
+            _likwid = 0xDa4e2a0C4AAa142f0D5f5C56fc3651DcfD2c9657;
+        } else if (chainId == MONAD_TESTNET) {
+            _likwid = 0x716CE8f47504bC7E6E4bd29856585a2e202a4De6;
+        } else {
+            _likwid = address(0); // Not deployed on other chains
         }
     }
 }
