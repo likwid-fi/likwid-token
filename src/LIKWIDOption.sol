@@ -86,6 +86,7 @@ contract LIKWIDOption is OFT, ERC20Permit {
         require(LIKWID.balanceOf(address(this)) >= amount, "LIKWIDOption: LIKWID insufficient balance");
 
         uint256 paymentAmount = amount * strikePrice / 1 ether;
+        require(paymentAmount > 0, "LIKWIDOption: paymentAmount must be greater than zero");
         IERC20(paymentToken).safeTransferFrom(_msgSender(), treasury, paymentAmount);
         _burn(_msgSender(), amount);
         LIKWID.safeTransfer(_msgSender(), amount);
