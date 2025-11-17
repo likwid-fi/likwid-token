@@ -41,7 +41,7 @@ contract SetLIKWIDScript is BaseTestScript, Script {
         if (receiveLib == address(0)) {
             revert ReceiveLibNotExist();
         }
-        address likwid = _getLikwid(chainId);
+        address likwid = _getLikwidOption(chainId);
         if (likwid == address(0)) {
             revert TokenNotExist();
         }
@@ -79,7 +79,7 @@ contract SetLIKWIDScript is BaseTestScript, Script {
             if (dstEid == 0) {
                 revert EidNotExist();
             }
-            bytes32 dstPeer = bytes32(uint256(uint160(_getLikwid(dstChainId))));
+            bytes32 dstPeer = bytes32(uint256(uint160(_getLikwidOption(dstChainId))));
             if (!LIKWID(likwid).isPeer(dstEid, dstPeer)) {
                 console.log("LIKWID peer already set for destination chain ID:", dstChainId, "at EID:", dstEid);
                 LIKWID(likwid).setPeer(dstEid, dstPeer); // Set LIKWID peer for the destination chain
@@ -89,13 +89,13 @@ contract SetLIKWIDScript is BaseTestScript, Script {
             bytes memory options = OptionsBuilder.newOptions().addExecutorLzReceiveOption(100000, 0);
             enforcedOptions[optionIndex] = EnforcedOptionParam({eid: dstEid, msgType: SEND, options: options});
             optionIndex++;
-            // Set send library for outbound messages
             if (
                 ILayerZeroEndpointV2(aEndPoint).getSendLibrary(
                     likwid, // OApp address
                     dstEid // Destination chain EID
                 ) == address(0)
             ) {
+                // Set send library for outbound messages
                 ILayerZeroEndpointV2(aEndPoint).setSendLibrary(
                     likwid, // OApp address
                     dstEid, // Destination chain EID

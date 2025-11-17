@@ -15,7 +15,7 @@ contract BaseTestScript {
 
     uint256[] SUPPORTED_CHAINS = [MONAD_TESTNET, BSC_TESTNET, SEPOLIA];
 
-    uint256 constant MAIN_CHAINID = MONAD_TESTNET; // Main Chain = Monad testnet
+    uint256 constant MAIN_CHAINID = SEPOLIA; // Main Chain = Monad testnet
 
     function _getEndpoint(uint256 chainId) internal pure returns (address _endpoint) {
         if (chainId == BSC_TESTNET) {
@@ -95,13 +95,25 @@ contract BaseTestScript {
     // On mainnet, the LIKWID contract is deployed with the same address.
     function _getLikwid(uint256 chainId) internal pure returns (address _likwid) {
         if (chainId == SEPOLIA) {
-            _likwid = 0x37c96b7F52d0E165832Ba8f614f91E76e36F1bcc;
+            _likwid = 0x9e32a617b6C4cF17ED33393A85840fB245c1aa13;
         } else if (chainId == BSC_TESTNET) {
-            _likwid = 0xDa4e2a0C4AAa142f0D5f5C56fc3651DcfD2c9657;
+            _likwid = 0x9f4414c038D99782949A070995092e6b3DD1E27E;
         } else if (chainId == MONAD_TESTNET) {
-            _likwid = 0x716CE8f47504bC7E6E4bd29856585a2e202a4De6;
+            _likwid = 0xe187a2102470EF4343E8597be97BB5E9d82C3CaD;
         } else {
             _likwid = address(0); // Not deployed on other chains
+        }
+    }
+
+    function _getLikwidOption(uint256 chainId) internal pure returns (address _likwidOption) {
+        if (chainId == SEPOLIA) {
+            _likwidOption = 0xC9235C89d6c35ef103C2FA1df3c61a92d628062b;
+        } else if (chainId == BSC_TESTNET) {
+            _likwidOption = 0xf1De577bcAda3FEeBEB2890D719A204F4698B9c1;
+        } else if (chainId == MONAD_TESTNET) {
+            _likwidOption = 0xCc8E34D68676406d253130038De8c0CF5158D6a9;
+        } else {
+            _likwidOption = address(0); // Not deployed on other chains
         }
     }
 }

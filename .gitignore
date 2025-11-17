@@ -23,3 +23,5 @@ broadcast/DeployLIKWIDTest.s.sol
 broadcast/SendOFTTest.s.sol
 broadcast/SetLIKWIDTest.s.sol
 broadcast/SetPairTest.s.sol
+broadcast/SetLIKWIDOptionTest.s.sol
+broadcast/SetOptionPairTest.s.sol
