@@ -23,6 +23,8 @@ contract SendOFTTest is BaseTestScript, Script {
         address oftAddress = _getLikwid(srcChainId);
         address toAddress = msg.sender; // Replace with actual recipient address
         uint32 dstEid = _getEid(dstChainId);
+        console.log("dstEid:", dstEid);
+        console.logBytes32(addressToBytes32(toAddress));
 
         vm.startBroadcast();
 
@@ -30,6 +32,7 @@ contract SendOFTTest is BaseTestScript, Script {
 
         // Build send parameters
         bytes memory extraOptions = OptionsBuilder.newOptions().addExecutorLzReceiveOption(80000, 0);
+        console.logBytes(extraOptions);
         SendParam memory sendParam = SendParam({
             dstEid: dstEid,
             to: addressToBytes32(toAddress),
@@ -45,9 +48,10 @@ contract SendOFTTest is BaseTestScript, Script {
 
         console.log("Sending tokens...");
         console.log("Fee amount:", fee.nativeFee);
+        console.log("lzTokenFee amount:", fee.lzTokenFee);
 
-        // Send tokens
-        oft.send{value: fee.nativeFee}(sendParam, fee, msg.sender);
+        // // Send tokens
+        // oft.send{value: fee.nativeFee}(sendParam, fee, msg.sender);
 
         vm.stopBroadcast();
     }
