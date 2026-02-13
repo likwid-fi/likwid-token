@@ -34,7 +34,7 @@ contract LIKWIDScript is BaseScript, Script {
         }
         uint32 eid = _getEid(chainId);
         if (eid == 0) {
-            revert EndpointNotExist();
+            revert EidNotExist();
         }
         token = new LIKWID(
             MAIN_CHAINID,
