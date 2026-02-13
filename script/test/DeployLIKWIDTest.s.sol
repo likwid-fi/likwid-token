@@ -3,8 +3,8 @@ pragma solidity ^0.8.13;
 
 import {Script, console} from "forge-std/Script.sol";
 import {BaseTestScript} from "./BaseTestScript.sol";
-import {LIKWID} from "../src/LIKWID.sol";
-import {LIKWIDOption} from "../src/LIKWIDOption.sol";
+import {LIKWID} from "../../src/LIKWID.sol";
+import {LIKWIDOption} from "../../src/LIKWIDOption.sol";
 
 contract LIKWIDScript is BaseTestScript, Script {
     LIKWID public token;

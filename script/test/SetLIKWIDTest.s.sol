@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import {Script, console} from "forge-std/Script.sol";
-import {LIKWID} from "../src/LIKWID.sol";
+import {LIKWID} from "../../src/LIKWID.sol";
 import {BaseTestScript} from "./BaseTestScript.sol";
 import {ILayerZeroEndpointV2} from "@layerzerolabs/lz-evm-protocol-v2/contracts/interfaces/ILayerZeroEndpointV2.sol";
 import {SetConfigParam} from "@layerzerolabs/lz-evm-protocol-v2/contracts/interfaces/IMessageLibManager.sol";
@@ -41,23 +41,26 @@ contract SetLIKWIDScript is BaseTestScript, Script {
         if (receiveLib == address(0)) {
             revert ReceiveLibNotExist();
         }
-        address likwid = _getLikwidOption(chainId);
+        address likwid = _getLikwid(chainId);
         if (likwid == address(0)) {
             revert TokenNotExist();
         }
         uint256 gracePeriod = 0; // Set to 0 for immediate library switch
-            // Set receive library for inbound messages
-        (address lib,) = ILayerZeroEndpointV2(aEndPoint).getReceiveLibrary(
-            likwid, // OApp address
-            srcEid // Source chain EID
-        );
+        // Set receive library for inbound messages
+        (address lib,) =
+            ILayerZeroEndpointV2(aEndPoint)
+                .getReceiveLibrary(
+                    likwid, // OApp address
+                    srcEid // Source chain EID
+                );
         if (lib == address(0)) {
-            ILayerZeroEndpointV2(aEndPoint).setReceiveLibrary(
-                likwid, // OApp address
-                srcEid, // Source chain EID
-                receiveLib, // ReceiveUln302 address
-                gracePeriod // Grace period for library switch
-            );
+            ILayerZeroEndpointV2(aEndPoint)
+                .setReceiveLibrary(
+                    likwid, // OApp address
+                    srcEid, // Source chain EID
+                    receiveLib, // ReceiveUln302 address
+                    gracePeriod // Grace period for library switch
+                );
         }
 
         address[] memory aDvns = _getDVNs(chainId);
@@ -79,7 +82,7 @@ contract SetLIKWIDScript is BaseTestScript, Script {
             if (dstEid == 0) {
                 revert EidNotExist();
             }
-            bytes32 dstPeer = bytes32(uint256(uint160(_getLikwidOption(dstChainId))));
+            bytes32 dstPeer = bytes32(uint256(uint160(_getLikwid(dstChainId))));
             if (!LIKWID(likwid).isPeer(dstEid, dstPeer)) {
                 console.log("LIKWID peer already set for destination chain ID:", dstChainId, "at EID:", dstEid);
                 LIKWID(likwid).setPeer(dstEid, dstPeer); // Set LIKWID peer for the destination chain
@@ -89,18 +92,20 @@ contract SetLIKWIDScript is BaseTestScript, Script {
             bytes memory options = OptionsBuilder.newOptions().addExecutorLzReceiveOption(100000, 0);
             enforcedOptions[optionIndex] = EnforcedOptionParam({eid: dstEid, msgType: SEND, options: options});
             optionIndex++;
+            // Set send library for outbound messages
             if (
-                ILayerZeroEndpointV2(aEndPoint).getSendLibrary(
-                    likwid, // OApp address
-                    dstEid // Destination chain EID
-                ) == address(0)
+                ILayerZeroEndpointV2(aEndPoint)
+                        .getSendLibrary(
+                            likwid, // OApp address
+                            dstEid // Destination chain EID
+                        ) == address(0)
             ) {
-                // Set send library for outbound messages
-                ILayerZeroEndpointV2(aEndPoint).setSendLibrary(
-                    likwid, // OApp address
-                    dstEid, // Destination chain EID
-                    sendLib // SendUln302 address
-                );
+                ILayerZeroEndpointV2(aEndPoint)
+                    .setSendLibrary(
+                        likwid, // OApp address
+                        dstEid, // Destination chain EID
+                        sendLib // SendUln302 address
+                    );
             }
             UlnConfig memory sendUln = UlnConfig({
                 confirmations: 15, // minimum block confirmations required on A before sending to B
